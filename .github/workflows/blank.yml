@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8" />
+<title>恋爱修罗场｜心动大挑战💥</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg1:#ff7e5f;--bg2:#feb47b;--accent1:#ff4500;--accent2:#ff1493;
+  --card-bg:#fff;--text-dark:#333;--muted:#999;
+}
+html,body{height:100%}
+body{
+  font-family:"PingFang SC","Helvetica Neue",Arial,sans-serif;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  min-height:100vh;display:flex;align-items:center;justify-content:center;color:#fff;padding:16px;
+}
+#game{
+  width:100%;max-width:520px;background:var(--card-bg);border-radius:28px;padding:22px;box-shadow:0 30px 70px rgba(255,69,0,0.18);
+  position:relative;overflow:hidden;opacity:0;transform:scale(0.96);transition:all .45s cubic-bezier(.2,.9,.2,1);
+}
+#game.ready{opacity:1;transform:scale(1)}
+.header{display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:12px}
+h1{font-size:26px;font-weight:800;background:linear-gradient(45deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hot-tag{position:absolute;right:6px;top:-8px;background:linear-gradient(45deg,#ff4500,#ff6347);color:#fff;font-size:12px;padding:4px 10px;border-radius:20px;font-weight:700;box-shadow:0 6px 18px rgba(255,69,0,0.12)}
+.top-controls{position:absolute;left:12px;top:12px;display:flex;gap:8px;align-items:center}
+.icon-btn{background:rgba(255,105,180,0.06);border:none;padding:8px;border-radius:999px;color:var(--accent2);font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:transform .18s ease,box-shadow .18s}
+.icon-btn:active{transform:scale(.96)}
+.share-btn{position:absolute;right:14px;bottom:14px;width:50px;height:50px;border-radius:50%;background:linear-gradient(45deg,#ff4500,#ff6347);color:#fff;border:none;font-size:22px;cursor:pointer;box-shadow:0 12px 30px rgba(255,69,0,0.18)}
+.mode-desc{color:#ff69b4;font-size:16px;margin-bottom:18px;font-weight:600;text-align:center}
+.mode-list{display:flex;flex-direction:column;gap:12px}
+.mode-btn{padding:18px;border-radius:20px;border:none;color:#fff;font-size:19px;font-weight:800;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;gap:6px;box-shadow:0 10px 20px rgba(0,0,0,0.08);transition:transform .18s ease}
+.mode-btn small{font-size:13px;opacity:.95;font-weight:600}
+.boy-mode{background:linear-gradient(45deg,#1e90ff,#6495ed)}
+.girl-mode{background:linear-gradient(45deg,#ff69b4,#ff1493)}
+.difficulty-list{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.difficulty-btn{padding:16px;border-radius:18px;border:none;color:#fff;font-size:17px;font-weight:800;cursor:pointer;position:relative;overflow:hidden;box-shadow:0 8px 20px rgba(0,0,0,0.06)}
+.difficulty-btn::after{content:attr(data-level);position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:13px;background:rgba(255,255,255,0.14);padding:4px 8px;border-radius:12px}
+.easy{background:linear-gradient(45deg,#9370db,#8a2be2)}
+.normal{background:linear-gradient(45deg,#4169e1,#1e90ff)}
+.hard{background:linear-gradient(45deg,#00ced1,#008b8b)}
+.crazy{background:linear-gradient(45deg,#ff7f50,#ff4500)}
+.hell{background:linear-gradient(45deg,#dc143c,#b22222)}
+#play{display:none;position:relative;padding-bottom:80px}
+.status{display:flex;justify-content:space-between;font-weight:800;margin:10px 0;color:var(--text-dark)}
+.progress-bar{width:100%;height:12px;background:#f1f1f1;border-radius:999px;overflow:hidden;margin-bottom:12px;box-shadow:inset 0 2px 6px rgba(0,0,0,0.04)}
+.progress{height:100%;background:linear-gradient(45deg,#ff69b4,#ff1493);width:100%;transition:width .5s cubic-bezier(.2,.9,.2,1)}
+#story{background:linear-gradient(135deg,#fff8f5,#fff0e6);padding:18px;border-radius:16px;margin-bottom:12px;font-size:17px;color:var(--text-dark);min-height:110px;box-shadow:0 8px 22px rgba(255,105,180,0.06);position:relative}
+#story::before{content:"💬";position:absolute;left:14px;top:14px;font-size:20px}
+#question{color:var(--accent1);font-weight:800;margin:12px 0;padding-left:8px;font-size:17px}
+.options{display:flex;flex-direction:column;gap:12px}
+.option{padding:16px;border-radius:14px;border:none;color:#fff;font-size:17px;font-weight:800;cursor:pointer;text-align:left;box-shadow:0 12px 26px rgba(0,0,0,0.08);transition:transform .18s,box-shadow .18s;display:flex;flex-direction:column;gap:6px}
+.option:active{transform:translateY(2px)}
+.option:disabled{opacity:.7;cursor:not-allowed;transform:none;box-shadow:0 6px 10px rgba(0,0,0,0.05)}
+.a{background:linear-gradient(45deg,#6c5ce7,#a29bfe)}
+.b{background:linear-gradient(45deg,#00b894,#00a085)}
+#result{margin-top:14px;min-height:72px;padding:14px;border-radius:12px;font-weight:700;text-align:center}
+.success{background:linear-gradient(135deg,#d4edda,#c3e6cb);color:#155724;border:2px solid #28a745}
+.fail{background:linear-gradient(135deg,#f8d7da,#f5c6cb);color:#721c24;border:2px solid #dc3545}
+#next{display:none;margin:16px auto 0;width:92%;padding:14px;border-radius:16px;border:none;background:linear-gradient(45deg,#ffb6c1,#ff69b4);color:#fff;font-size:17px;font-weight:900;cursor:pointer;box-shadow:0 12px 28px rgba(255,105,180,0.14)}
+.modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:120;opacity:0;visibility:hidden;transition:all .18s}
+.modal.active{opacity:1;visibility:visible}
+.modal-content{background:#fff;border-radius:16px;padding:20px;max-width:420px;width:86%;text-align:center;box-shadow:0 30px 60px rgba(0,0,0,0.2);}
+.modal-title{font-size:20px;color:var(--accent1);font-weight:900;margin-bottom:10px}
+.modal-desc{color:var(--text-dark);font-size:15px;margin-bottom:16px;line-height:1.5}
+.modal-actions{display:flex;gap:10px;justify-content:center;margin-top:10px}
+.modal-btn{padding:12px 20px;border-radius:12px;border:none;font-weight:800;cursor:pointer;flex:1}
+.confirm-btn{background:linear-gradient(45deg,#ff69b4,#ff1493);color:#fff}
+.cancel-btn{background:#f5f5f5;color:#333}
+#confetti{position:absolute;inset:0;pointer-events:none;z-index:90;display:none}
+@media(max-width:420px){
+  h1{font-size:22px}
+  .mode-btn{font-size:16px;padding:14px}
+  .difficulty-btn{font-size:15px;padding:12px}
+  #story{font-size:15px;min-height:100px}
+  .option{font-size:15px;padding:14px}
+}
+</style>
+</head>
+<body>
+<div id="game" aria-live="polite">
+  <div class="header">
+    <h1>恋爱修罗场 💔</h1>
+    <span class="hot-tag">抖音爆款🔥</span>
+    <div class="top-controls">
+      <button type="button" id="backBtn" class="icon-btn" title="返回" aria-label="返回" style="display:none">←</button>
+      <button type="button" id="soundBtn" class="icon-btn" title="音效开关" aria-label="音效">🔊</button>
+      <button type="button" id="musicBtn" class="icon-btn" title="背景音乐" aria-label="音乐">🎵</button>
+    </div>
+  </div>
+
+  <div id="modeMenu">
+    <p class="mode-desc">选择你的恋爱视角，挑战心动极限！</p>
+    <div class="mode-list">
+      <button type="button" class="mode-btn boy-mode" data-mode="boy">👦 男生模式 <small>考验你的女朋友，甜蜜通关</small></button>
+      <button type="button" class="mode-btn girl-mode" data-mode="girl">👧 女生模式 <small>考验你的男朋友，高甜预警</small></button>
+    </div>
+  </div>
+
+  <div id="difficultyMenu" style="display:none">
+    <h2 id="modeTitle" style="text-align:center;font-size:20px;margin-bottom:20px;color:#ff4500"></h2>
+    <div class="difficulty-list">
+      <button type="button" class="difficulty-btn easy" data-d="0" data-level="Lv1">🍬 甜甜恋爱（无压力）</button>
+      <button type="button" class="difficulty-btn normal" data-d="1" data-level="Lv2">💕 日常暧昧（小甜小撩）</button>
+      <button type="button" class="difficulty-btn hard" data-d="2" data-level="Lv3">⚡ 情绪拉扯（高情商考验）</button>
+      <button type="button" class="difficulty-btn crazy" data-d="3" data-level="Lv4">🔥 修罗翻车（极限救场）</button>
+      <button type="button" class="difficulty-btn hell" data-d="4" data-level="Lv5">💀 前任地狱（终极挑战）</button>
+    </div>
+  </div>
+
+  <div id="play" style="display:none">
+    <div class="status">
+      <span id="stageText">🔥 --</span>
+      <span id="heartText">❤️ 心动值: 100</span>
+    </div>
+    <div class="progress-bar"><div class="progress" id="progressBar"></div></div>
+
+    <div id="story" aria-live="polite"></div>
+    <div id="question"></div>
+
+    <div class="options">
+      <button type="button" id="btnA" class="option a"></button>
+      <button type="button" id="btnB" class="option b"></button>
+    </div>
+
+    <div id="result" aria-live="assertive"></div>
+    <button type="button" id="next">继续下一关 ▶</button>
+  </div>
+
+  <button type="button" id="shareMain" class="share-btn" aria-label="分享">📤</button>
+  <canvas id="confetti"></canvas>
+</div>
+
+<div id="modalRoot"></div>
+
+<script>
+'use strict';
+
+const Game = (() => {
+  const MAX_LEVELS = 20;
+  const STORAGE_KEY = 'lovearena_state_v3';
+  const partnerName = { boy: '女朋友', girl: '男朋友' };
+
+  const difficulties = [
+    { name: "甜甜恋爱", hp: 100 },
+    { name: "日常暧昧", hp: 80 },
+    { name: "情绪拉扯", hp: 60 },
+    { name: "修罗翻车", hp: 50 },
+    { name: "前任地狱", hp: 40 }
+  ];
+
+  // 题目模板
+  const templates = {
+    boy: {
+      0: [
+        {s:"你发了一个心情小视频", q:"她会怎么回？", c:"好可爱！一点都不无聊～", w:"哦", r:"及时回应+夸赞是基础"},
+        {s:"她发了张吃饭的照片", q:"你会说？", c:"看起来好好吃，下次带我一起去！", w:"吃吧", r:"主动邀约拉近距离"},
+        {s:"她说想睡了", q:"你怎么回？", c:"晚安宝贝，做个甜甜的梦～", w:"嗯", r:"温柔晚安最暖心"},
+        {s:"她发了一张自拍", q:"你回复？", c:"哇！太好看了，我的心都被偷走了", w:"还行", r:"真诚夸赞最动人"},
+        {s:"她分享了一个小幸运", q:"你怎么说？", c:"为你开心！幸运要分享才完整～", w:"那挺好", r:"共情是感情催化剂"},
+        {s:"她问周末干嘛", q:"你说？", c:"想和你一起去逛街看电影～", w:"还没想好", r:"主动约会最加分"},
+        {s:"她发语音说今天好累", q:"你回？", c:"辛苦啦，抱抱你，回来我给你按摩", w:"那早点睡", r:"实际关怀胜过空话"}
+      ],
+      1: [
+        {s:"她问你有没有想她", q:"你怎么答？", c:"当然想，一分钟没见就想你", w:"还好吧", r:"甜言蜜语要大胆"},
+        {s:"她发了一张美美的自拍问好看吗", q:"你说？", c:"美到犯规！我报警了", w:"好看", r:"夸张式夸赞超有效"},
+        {s:"她感叹时间过得真快", q:"你接？", c:"和你在一天就过得特别快～", w:"是啊", r:"把话题转到感情"},
+        {s:"她说想吃火锅", q:"你回复？", c:"走！现在就带你去吃", w:"下次吧", r:"即时行动最浪漫"},
+        {s:"她发了一个可爱表情包", q:"你怎么回？", c:"哈哈哈你怎么这么可爱！", w:"嗯", r:"积极互动升温快"},
+        {s:"她问你在干嘛", q:"最佳回复？", c:"在想我的小宝贝呀～", w:"上班呢", r:"甜蜜反问更撩人"}
+      ],
+      2: [
+        {s:"她今天回复很慢，语气冷淡", q:"你怎么关心？", c:"宝贝怎么了？是不是心情不好，和我说说", w:"怎么不回我了", r:"先关心后询问更稳"},
+        {s:"她说你最近不怎么找她", q:"你怎么解释？", c:"对不起，是我不好，让你觉得被忽视了", w:"我很忙啊", r:"认错比辩解有用"},
+        {s:"她工作压力大抱怨了一句", q:"你说？", c:"辛苦了，我在呢，想抱抱你", w:"那就忍忍吧", r:"陪伴胜过鸡汤"},
+        {s:"她看到你点赞了别的女生照片", q:"你怎么安抚？", c:"只是随手点的，你吃醋的样子好可爱～", w:"又不是什么", r:"轻描淡写+反撩最优"},
+        {s:"她半夜发消息说睡不着", q:"你回？", c:"我陪你聊到睡着，好不好？", w:"那你数羊吧", r:"主动陪伴最暖"},
+        {s:"她说想安静几天", q:"你怎么做？", c:"好，我给你空间，但随时找我哦", w:"随便你", r:"尊重+留后路最成熟"}
+      ],
+      3: [
+        {s:"她发现你手机里有前任的聊天记录", q:"你怎么处理？", c:"这是以前的，我现在当着你面删掉", w:"又不是什么大事", r:"果断清理给安全感"},
+        {s:"她生气说你不重视她", q:"你怎么挽回？", c:"是我不对，我愿意改，你别生气了好不好", w:"你又小题大做", r:"低姿态最有效"},
+        {s:"她看到你和异性同事合照", q:"你解释？", c:"就是普通同事，别多想，我只喜欢你", w:"你管得太宽了", r:"坚定表忠心最重要"},
+        {s:"她质问你为什么不接电话", q:"你说？", c:"对不起手机静音了，我现在打给你", w:"在忙呢", r:"主动补救最真诚"},
+        {s:"她冷战了两天", q:"你怎么破冰？", c:"宝贝，我错了，我们好好谈谈好吗", w:"等她自己联系", r:"主动认错最快和好"},
+        {s:"她说考虑分手", q:"你怎么留？", c:"别急着决定，我不想失去你，我们再试试", w:"那就分吧", r:"真诚挽留最动人"}
+      ],
+      4: [
+        {s:"前任突然加你微信", q:"你怎么做？", c:"直接拒绝并告诉她：我现在有女朋友", w:"先加上看看", r:"立场坚定最重要"},
+        {s:"她发现你没删前任照片", q:"你反应？", c:"我现在就删，你别不高兴", w:"又不是联系", r:"立即行动给信任"},
+        {s:"前任发消息说想你了", q:"你怎么回她？", c:"我有女朋友了，请不要再联系", w:"已读不回", r:"明确拒绝更负责"},
+        {s:"她问你会不会和前任复合", q:"你说？", c:"不可能，我只想和你过一辈子", w:"看情况吧", r:"坚定表态最安心"},
+        {s:"前任当着她的面联系你", q:"你怎么处理？", c:"当场拉黑，并抱抱她说只有你", w:"事后解释", r:"公开护爱最加分"},
+        {s:"她哭着说害怕失去你", q:"你怎么安慰？", c:"我不会让你失去我，我会用行动证明", w:"别瞎想", r:"承诺+行动最有力"}
+      ]
+    },
+    girl: {
+      0: [
+        {s:"他发来搞笑表情包", q:"你怎么回？", c:"哈哈哈你笑死我了，太可爱了！", w:"嗯", r:"积极互动最加分"},
+        {s:"他说想吃你做的饭", q:"你说？", c:"好呀，周末来我家我做给你吃～", w:"随便吃点吧", r:"主动邀约超甜"},
+        {s:"他说今天好累", q:"你回？", c:"辛苦啦宝贝，抱抱你，回来我给你按摩", w:"那早点休息", r:"体贴关怀最暖"},
+        {s:"他发自拍问帅不帅", q:"你回复？", c:"帅爆了！我要藏起来不让别人看", w:"帅", r:"夸张式夸赞最有效"},
+        {s:"他说想你了", q:"你怎么接？", c:"我也好想你，抱抱～快点来见我", w:"哦", r:"热情回应最撩人"},
+        {s:"他问周末有空吗", q:"你说？", c:"有空！想和你一起出去玩", w:"看情况", r:"主动最浪漫"}
+      ],
+      1: [
+        {s:"他发了一张帅气的自拍", q:"高甜回复？", c:"天哪太帅了，我要晕倒了", w:"不错", r:"大胆夸赞最动人"},
+        {s:"他说刚下班", q:"你回？", c:"辛苦啦，快回来我给你准备了惊喜～", w:"嗯早点睡", r:"小惊喜最温馨"},
+        {s:"他分享工作上的开心事", q:"你说？", c:"太棒了！为你骄傲，晚上奖励你", w:"厉害", r:"同步情绪更亲密"},
+        {s:"他问你在干嘛", q:"你回复？", c:"在想我的帅男友呀～", w:"吃饭呢", r:"反撩最甜"},
+        {s:"他说想抱你", q:"你怎么回？", c:"我也想抱抱你，快点来找我", w:"嗯", r:"热情回应升温快"}
+      ],
+      2: [
+        {s:"他回复消息很慢", q:"你怎么不尴尬？", c:"忙坏了吧？别太累了，记得喝水～", w:"你在干嘛啊", r:"温柔理解更吸引"},
+        {s:"他说可能会晚归", q:"你回？", c:"注意安全，到了告诉我一声，晚安", w:"随便你", r:"信任+关心最稳"},
+        {s:"他情绪低落", q:"你怎么做？", c:"我在呢，想聊就找我，我一直听着", w:"那你自己想吧", r:"陪伴胜过逼问"},
+        {s:"他忘了回你消息", q:"你说？", c:"没事啦，肯定是忙晕了，抱抱", w:"为什么不回我", r:"大度最有魅力"},
+        {s:"他说压力大", q:"你安慰？", c:"辛苦了，我在你身边，别硬扛", w:"加油", r:"实际陪伴更重要"}
+      ],
+      3: [
+        {s:"你发现他点赞了前任动态", q:"你怎么应对？", c:"有点吃醋，但相信你，抱抱我嘛～", w:"你什么意思", r:"表达感受+撒娇最优"},
+        {s:"他冷暴力一天", q:"你怎么破冰？", c:"宝贝，是不是我哪里做得不好？我们谈谈", w:"随便你", r:"主动沟通最成熟"},
+        {s:"他忘了纪念日", q:"你回应？", c:"虽然有点失落，但更开心你还在我身边", w:"你怎么忘了！", r:"以情动人更容易"},
+        {s:"他和异性朋友走得很近", q:"你说？", c:"我有点不舒服，能不能多注意我的感受", w:"你管太多了", r:"表达需求不指责"},
+        {s:"他心情不好发脾气", q:"你怎么做？", c:"我知道你不是故意的，我在呢，抱抱", w:"你干什么", r:"包容最治愈"}
+      ],
+      4: [
+        {s:"前任加你好友说想复合", q:"你怎么处理？", c:"直接拒绝并告诉他：我现在很幸福", w:"先看看", r:"立场坚定最重要"},
+        {s:"他被前任纠缠", q:"你怎么支持？", c:"我和你一起面对，别担心，有我呢", w:"你自己处理", r:"共同面对最稳固"},
+        {s:"他手机里有前任照片", q:"你说？", c:"我有点难过，能不能删掉？我会更安心", w:"随便你看", r:"表达感受+请求最优"},
+        {s:"前任造谣你们关系", q:"你怎么做？", c:"我们一起澄清，我相信你", w:"别理她", r:"并肩作战最加分"},
+        {s:"他犹豫是否删前任联系方式", q:"你态度？", c:"我相信你的选择，但希望你为我们着想", w:"必须删", r:"信任+引导更高级"}
+      ]
+    }
+  };
+
+  // DOM
+  const $ = id => document.getElementById(id);
+  const els = {
+    game: $('game'),
+    backBtn: $('backBtn'),
+    soundBtn: $('soundBtn'),
+    musicBtn: $('musicBtn'),
+    modeMenu: $('modeMenu'),
+    difficultyMenu: $('difficultyMenu'),
+    modeTitle: $('modeTitle'),
+    play: $('play'),
+    stageText: $('stageText'),
+    heartText: $('heartText'),
+    progressBar: $('progressBar'),
+    story: $('story'),
+    question: $('question'),
+    btnA: $('btnA'),
+    btnB: $('btnB'),
+    result: $('result'),
+    next: $('next'),
+    shareMain: $('shareMain'),
+    modalRoot: $('modalRoot'),
+    confetti: $('confetti')
+  };
+
+  // 状态（支持多存档）
+  let state = {
+    mode: '',
+    difficulty: -1,
+    hp: 100,
+    maxHp: 100,
+    current: 0,
+    levels: [],
+    bestRecord: { boy: [0,0,0,0,0], girl: [0,0,0,0,0] },
+    soundOn: true,
+    musicOn: false
+  };
+
+  // 音频
+  const audioURLs = {
+    click: 'https://cdn.jsdelivr.net/gh/yyu8881/demo-assets/click.mp3',
+    success: 'https://cdn.jsdelivr.net/gh/yyu8881/demo-assets/success.mp3',
+    fail: 'https://cdn.jsdelivr.net/gh/yyu8881/demo-assets/fail.mp3',
+    win: 'https://cdn.jsdelivr.net/gh/yyu8881/demo-assets/win.mp3',
+    lose: 'https://cdn.jsdelivr.net/gh/yyu8881/demo-assets/lose.mp3',
+    bg: 'https://cdn.jsdelivr.net/gh/yyu8881/demo-assets/ambient.mp3'
+  };
+  const sounds = {};
+  let bgMusic = null;
+
+  function preloadAudio() {
+    Object.entries(audioURLs).forEach(([key, url]) => {
+      if (key === 'bg') return;
+      const a = new Audio(url);
+      a.preload = 'auto';
+      sounds[key] = a;
+    });
+    bgMusic = new Audio(audioURLs.bg);
+    bgMusic.loop = true;
+    bgMusic.volume = 0.15;
+  }
+
+  function playSFX(key) {
+    if (!state.soundOn || !sounds[key]) return;
+    sounds[key].currentTime = 0;
+    sounds[key].play().catch(() => {});
+  }
+
+  function toggleBG() {
+    state.musicOn = !state.musicOn;
+    els.musicBtn.textContent = state.musicOn ? '🎵' : '🔈';
+    if (state.musicOn) {
+      bgMusic?.play().catch(() => {});
+    } else {
+      bgMusic?.pause();
+    }
+    saveState();
+  }
+
+  // 工具
+  function saveState() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) {
+      // ignore storage errors for now
+    }
+  }
+
+  function loadState() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        Object.assign(state, parsed);
+        if (!state.bestRecord) state.bestRecord = { boy: [0,0,0,0,0], girl: [0,0,0,0,0] };
+      }
+    } catch (e) {}
+  }
+
+  function buildLevels(mode, diff) {
+    const base = templates[mode][diff] || [];
+    const levels = [];
+    for (let i = 0; i < MAX_LEVELS; i++) {
+      const tpl = base[i % base.length];
+      levels.push({ ...tpl });
+    }
+    return levels;
+  }
+
+  function updateBestRecord() {
+    const { mode, difficulty, current } = state;
+    if (current + 1 > state.bestRecord[mode][difficulty]) {
+      state.bestRecord[mode][difficulty] = current + 1;
+      saveState();
+    }
+  }
+
+  // UI 切换
+  function showModeMenu() {
+    els.modeMenu.style.display = '';
+    els.difficultyMenu.style.display = 'none';
+    els.play.style.display = 'none';
+    els.backBtn.style.display = 'none';
+    bgMusic?.pause();
+  }
+
+  function showDifficulty(mode) {
+    playSFX('click');
+    state.mode = mode;
+    els.modeMenu.style.display = 'none';
+    els.difficultyMenu.style.display = '';
+    els.backBtn.style.display = '';
+    els.modeTitle.innerHTML = `【${partnerName[mode]}模式】<br><small>选择挑战难度</small>`;
+    if (state.musicOn) bgMusic?.play().catch(() => {});
+    saveState();
+  }
+
+  function startGame(diff) {
+    playSFX('click');
+    state.difficulty = diff;
+    state.maxHp = difficulties[diff].hp;
+    state.hp = state.maxHp;
+    state.current = 0;
+    state.levels = buildLevels(state.mode, diff);
+
+    els.difficultyMenu.style.display = 'none';
+    els.play.style.display = '';
+    renderCurrent();
+    if (state.musicOn) bgMusic?.play().catch(() => {});
+    saveState();
+  }
+
+  function renderCurrent() {
+    const { current, levels, hp, maxHp, mode, difficulty } = state;
+    const lev = levels[current];
+
+    els.stageText.textContent = `第 ${current + 1}/${MAX_LEVELS} 关 · ${difficulties[difficulty].name}`;
+    els.heartText.textContent = `❤️ 心动值: ${hp}/${maxHp}`;
+    els.progressBar.style.width = `${(hp / maxHp) * 100}%`;
+
+    // 使用 textContent 更安全
+    els.story.textContent = `【你的${partnerName[mode]}】${lev.s}`;
+    els.question.textContent = lev.q;
+
+    const isACorrect = Math.random() < 0.5;
+    els.btnA.textContent = `A: ${isACorrect ? lev.c : lev.w}`;
+    els.btnB.textContent = `B: ${isACorrect ? lev.w : lev.c}`;
+
+    els.btnA.disabled = els.btnB.disabled = false;
+    els.result.innerHTML = '';
+    els.next.style.display = 'none';
+
+    state.lastCorrectIndex = isACorrect ? 0 : 1;
+  }
+
+  let chooseLocked = false;
+  function choose(index) {
+    if (chooseLocked) return;
+    chooseLocked = true;
+    setTimeout(() => { chooseLocked = false; }, 600);
+
+    els.btnA.disabled = els.btnB.disabled = true;
+    playSFX('click');
+
+    const lev = state.levels[state.current];
+    const correct = index === state.lastCorrectIndex;
+
+    if (correct) {
+      playSFX('success');
+      state.hp = Math.min(state.maxHp, state.hp + 10);
+      els.result.innerHTML = `<div class="success">💖 正确！心动值 +10<br><small>${lev.r}</small></div>`;
+    } else {
+      playSFX('fail');
+      state.hp = Math.max(0, state.hp - 20);
+      els.result.innerHTML = `<div class="fail">💥 错误！心动值 -20<br>正确答案：${lev.c}</div>`;
+      if (state.hp <= 0) {
+        setTimeout(gameOver, 800);
+        return;
+      }
+    }
+
+    els.heartText.textContent = `❤️ 心动值: ${state.hp}/${state.maxHp}`;
+    els.progressBar.style.width = `${(state.hp / state.maxHp) * 100}%`;
+    els.next.style.display = 'block';
+    saveState();
+  }
+
+  function nextLevel() {
+    playSFX('click');
+    state.current++;
+    if (state.current >= MAX_LEVELS) {
+      updateBestRecord();
+      playSFX('win');
+      showConfetti();
+      const nextDiff = state.difficulty + 1;
+      const title = `🎉 通关！第20关完美拿下！<br>你是真正的恋爱大师！`;
+      const desc = nextDiff < 5 
+        ? `要挑战更难的【${difficulties[nextDiff].name}】吗？`
+        : `所有难度已通关！你就是恋爱天花板🏆`;
+      showModal(title, desc, 
+        nextDiff < 5 ? () => startGame(nextDiff) : shareGame,
+        () => location.reload()
+      );
+    } else {
+      renderCurrent();
+    }
+  }
+
+  function gameOver() {
+    updateBestRecord();
+    playSFX('lose');
+    const reached = state.current + 1;
+    showModal(
+      `💔 心动值归零了...<br>本次挑战到第 ${reached} 关`,
+      `再来一次，相信你能走得更远！`,
+      () => startGame(state.difficulty),
+      showModeMenu
+    );
+  }
+
+  function showModal(titleHTML, descHTML = '', onConfirm, onCancel) {
+    const modal = document.createElement('div');
+    modal.className = 'modal active';
+    modal.innerHTML = `
+      <div class="modal-content" role="dialog" aria-modal="true">
+        <div class="modal-title">${titleHTML}</div>
+        <div class="modal-desc">${descHTML}</div>
+        <div class="modal-actions">
+          <button type="button" class="modal-btn confirm-btn">确定</button>
+          <button type="button" class="modal-btn cancel-btn">取消</button>
+        </div>
+      </div>
+    `;
+    els.modalRoot.appendChild(modal);
+
+    const confirmBtn = modal.querySelector('.confirm-btn');
+    const cancelBtn = modal.querySelector('.cancel-btn');
+
+    confirmBtn.onclick = () => {
+      playSFX('click');
+      modal.remove();
+      onConfirm?.();
+    };
+    cancelBtn.onclick = () => {
+      playSFX('click');
+      modal.remove();
+      onCancel?.();
+    };
+
+    // 点击遮罩关闭（点击到 modal 背景）
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        playSFX('click');
+        modal.remove();
+        onCancel?.();
+      }
+    });
+
+    // ESC 也能关闭
+    function onKey(e) {
+      if (e.key === 'Escape') {
+        playSFX('click');
+        modal.remove();
+        onCancel?.();
+        document.removeEventListener('keydown', onKey);
+      }
+    }
+    document.addEventListener('keydown', onKey);
+
+    // 简单焦点管理
+    confirmBtn.focus();
+  }
+
+  function shareGame() {
+    const best = state.bestRecord[state.mode][state.difficulty] || 0;
+    const text = `我在《恋爱修罗场》${partnerName[state.mode]}模式·${difficulties[state.difficulty].name}通关了${best}关！快来挑战我～`;
+    const url = location.href;
+
+    if (navigator.share) {
+      navigator.share({ title: '恋爱修罗场', text, url }).catch(() => {});
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(url).then(() => {
+        alert('链接已复制！快去分享给朋友一起玩～');
+      }).catch(() => {
+        alert('请手动复制链接分享：' + url);
+      });
+    } else {
+      alert('请手动复制链接分享：' + url);
+    }
+  }
+
+  function showConfetti() {
+    const canvas = els.confetti;
+    canvas.style.display = 'block';
+    const ctx = canvas.getContext('2d');
+    // 更稳健的尺寸计算
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = Math.max(1, Math.floor(rect.width));
+    canvas.height = Math.max(1, Math.floor(rect.height));
+
+    const pieces = [];
+    const colors = ['#ff6b6b','#ffd93d','#6bcf7f','#4d79ff','#a56eff','#ff8ab8'];
+    for (let i = 0; i < 100; i++) {
+      pieces.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height - canvas.height,
+        size: Math.random() * 10 + 5,
+        speed: Math.random() * 4 + 2,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        rotation: Math.random() * 360,
+        spin: Math.random() * 10 - 5
+      });
+    }
+
+    let anim;
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      pieces.forEach(p => {
+        p.y += p.speed;
+        p.rotation += p.spin;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rotation * Math.PI / 180);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size * 0.5);
+        ctx.restore();
+      });
+      if (pieces.some(p => p.y < canvas.height)) {
+        anim = requestAnimationFrame(draw);
+      } else {
+        cancelAnimationFrame(anim);
+        canvas.style.display = 'none';
+      }
+    }
+    draw();
+  }
+
+  // 初始化
+  function init() {
+    preloadAudio();
+    loadState();
+
+    els.soundBtn.textContent = state.soundOn ? '🔊' : '🔇';
+    els.musicBtn.textContent = state.musicOn ? '🎵' : '🔈';
+
+    if (state.mode) {
+      showDifficulty(state.mode);
+    } else {
+      showModeMenu();
+    }
+
+    // 事件绑定
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+      btn.onclick = () => showDifficulty(btn.dataset.mode);
+    });
+    document.querySelectorAll('.difficulty-btn').forEach(btn => {
+      btn.onclick = () => startGame(+btn.dataset.d);
+    });
+    els.backBtn.onclick = () => {
+      playSFX('click');
+      if (els.play.style.display !== 'none') {
+        showModal('确定放弃当前进度？', '', () => {
+          els.play.style.display = 'none';
+          els.difficultyMenu.style.display = '';
+        }, () => {});
+      } else {
+        showModeMenu();
+      }
+    };
+    els.soundBtn.onclick = () => {
+      state.soundOn = !state.soundOn;
+      els.soundBtn.textContent = state.soundOn ? '🔊' : '🔇';
+      saveState();
+      playSFX('click');
+    };
+    els.musicBtn.onclick = toggleBG;
+    els.btnA.onclick = () => choose(0);
+    els.btnB.onclick = () => choose(1);
+    els.next.onclick = nextLevel;
+    els.shareMain.onclick = shareGame;
+
+    // 键盘支持
+    document.addEventListener('keydown', e => {
+      if (els.play.style.display === 'none') return;
+      if (e.key.toLowerCase() === 'a') els.btnA.click();
+      if (e.key.toLowerCase() === 'b') els.btnB.click();
+      if (e.key === 'Enter' && els.next.style.display !== 'none') els.next.click();
+    });
+
+    // 动画入场
+    setTimeout(() => els.game.classList.add('ready'), 100);
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
